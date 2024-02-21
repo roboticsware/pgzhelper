@@ -3,6 +3,7 @@ import math
 import pygame
 from pgzero.actor import Actor, POS_TOPLEFT, ANCHOR_CENTER, transform_anchor
 from pgzero import game, loaders
+from pgzero.screen import ptext
 import sys
 import time
 from typing import Sequence, Tuple, Union
@@ -995,6 +996,8 @@ class Actor(Actor):
     self._transform_cnt = 0
     self._orig_surfs = {}        
     self._surfs = {}    
+    self._tp_surf = None
+    self._last_pos = None
     self._animate_counter = 0
     self._animate_run = False
     self._radius = None
@@ -1390,3 +1393,50 @@ class Actor(Actor):
 
   def get_rect(self):
     return self._rect
+
+  def say(self, text, size: Tuple[int, int], **kwargs):
+    ptext.drawbox(text, (self.left - 50, self.top - 50, size[0], size[1]), **kwargs)
+
+  def say_for_sec(self, text, size: Tuple[int, int], seconds, **kwargs):
+    ptext.drawbox(text, (self.left - 50, self.top - 50, size[0], size[1]), **kwargs)
+    pygame.display.update()
+    game.time.sleep(seconds)
+    
+  def pen_init(self, size: Tuple[int, int]):
+    self._tp_surf = pygame.Surface((size[0], size[1]), pygame.SRCALPHA)
+    self._tp_surf.fill((255, 255, 255, 0))
+
+  def __align_center_to_anchor(self):
+    if self.anchor == ('left', 'top'):
+      return self.topleft
+    elif self.anchor == ('left', 'middle'):
+      return self.midleft
+    elif self.anchor == ('left', 'bottom'):
+      return self.bottomleft
+    elif self.anchor == ('right', 'top'):
+      return self.topright
+    elif self.anchor == ('right', 'middle'):
+      return self.midright
+    elif self.anchor == ('right', 'bottom'):
+      return self.bottomright
+    elif self.anchor == ('middle', 'top'):
+      return self.midtop
+    elif self.anchor == ('middle', 'bottom'):
+      return self.midbottom
+    else:
+      return self.center
+    
+  def pen_start(self, thick, color='white'):
+    pos = self.__align_center_to_anchor()
+    if self._last_pos and self._last_pos != pos:
+      pygame.draw.line(self._tp_surf, color, self._last_pos, pos, thick)
+    self._last_pos = pos
+
+  def pen_stop(self):
+    self._last_pos = None
+
+  def pen_clear(self):
+    self._tp_surf.fill((255, 255, 255, 0))
+
+  def pen_update(self):
+    game.screen.blit(self._tp_surf, (0, 0))
