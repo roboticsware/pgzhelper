@@ -1445,3 +1445,9 @@ class Actor(Actor):
 
   def brush_update(self):
     game.screen.blit(self._tp_surf, (0, 0))
+
+
+class Util():
+    @staticmethod
+    def opencv_to_pygame_img(frame):
+        return pygame.image.frombuffer(frame.tostring(), frame.shape[1::-1], "BGR")
