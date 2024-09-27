@@ -1,42 +1,34 @@
+# Part of the RoboticsWare project - https://roboticsware.uz
+# Copyright (C) 2022 RoboticsWare (neopia.uz@gmail.com)
+# 
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+# 
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+# 
+# You should have received a copy of the GNU Lesser General
+# Public License along with this library; if not, write to the
+# Free Software Foundation, Inc., 59 Temple Place, Suite 330,
+# Boston, MA  02111-1307  USA
+
 # from __future__ import annotations
 import math
 import pygame
 from pgzero.actor import Actor, POS_TOPLEFT, ANCHOR_CENTER, transform_anchor
 from pgzero import game, loaders
 from pgzero.screen import ptext
-import sys
 import time
 from typing import Sequence, Tuple, Union
 from pygame import Vector2
 
 _Coordinate = Union[Tuple[float, float], Sequence[float], Vector2]
-_fullscreen = False
 
-def set_fullscreen():
-  global _fullscreen
-  mod = sys.modules['__main__']
-  mod.screen.surface = pygame.display.set_mode((mod.WIDTH, mod.HEIGHT), pygame.FULLSCREEN)
-  _fullscreen = True
-
-def set_windowed():
-  global _fullscreen
-  mod = sys.modules['__main__']
-  mod.screen.surface = pygame.display.set_mode((mod.WIDTH, mod.HEIGHT))
-  _fullscreen = False
-
-def toggle_fullscreen():
-  if _fullscreen:
-    set_windowed()
-  else:
-    set_fullscreen()
-
-def hide_mouse():
-  pygame.mouse.set_visible(False)
-
-def show_mouse():
-  pygame.mouse.set_visible(True)
-
-def distance_to(from_x, from_y, to_x, to_y):
+def _distance_to(from_x, from_y, to_x, to_y):
   dx = to_x - from_x
   dy = to_y - from_y
   return math.sqrt(dx**2 + dy**2)
@@ -46,7 +38,7 @@ def distance_to_squared(from_x, from_y, to_x, to_y):
   dy = to_y - from_y
   return dx**2 + dy**2
 
-def direction_to(from_x, from_y, to_x, to_y):
+def _direction_to(from_x, from_y, to_x, to_y):
   dx = to_x - from_x
   dy = from_y - to_y
 
@@ -133,7 +125,7 @@ class Collide():
   def line_line_dist(l1x1, l1y1, l1x2, l1y2, l2x1, l2y1, l2x2, l2y2):
     ix, iy = Collide.line_line_XY(l1x1, l1y1, l1x2, l1y2, l2x1, l2y1, l2x2, l2y2)
     if ix is not None:
-      return distance_to(l1x1, l1y1, ix, iy)
+      return _distance_to(l1x1, l1y1, ix, iy)
     return None
 
   @staticmethod
@@ -282,7 +274,7 @@ class Collide():
   def line_circle_dist(x1, y1, x2, y2, cx, cy, radius):
     ix, iy = Collide.line_circle_XY(x1, y1, x2, y2, cx, cy, radius)
     if ix is not None:
-      return distance_to(x1, y1, ix, iy)
+      return _distance_to(x1, y1, ix, iy)
     return None
 
   @staticmethod
@@ -349,7 +341,7 @@ class Collide():
   def line_rect_dist(x1, y1, x2, y2, rx, ry, w, h):
     ix, iy = Collide.line_rect_XY(x1, y1, x2, y2, rx, ry, w, h)
     if ix is not None:
-      return distance_to(x1, y1, ix, iy)
+      return _distance_to(x1, y1, ix, iy)
     return None
 
   @staticmethod
@@ -418,7 +410,7 @@ class Collide():
   def line_obb_dist(x1, y1, x2, y2, ox, oy, w, h, angle):
     ix, iy = Collide.line_obb_XY(x1, y1, x2, y2, ox, oy, w, h, angle)
     if ix is not None:
-      return distance_to(x1, y1, ix, iy)
+      return _distance_to(x1, y1, ix, iy)
     return None
 
   @staticmethod
@@ -1022,20 +1014,20 @@ class Actor(Actor):
       x, y = target.pos
     else:
       x, y = target
-    return distance_to(self.x, self.y, x, y)
+    return _distance_to(self.x, self.y, x, y)
 
   def distance_toXY(self, x, y):
-    return distance_to(self.x, self.y, x, y)
+    return _distance_to(self.x, self.y, x, y)
 
   def direction_to(self, target):
     if isinstance(target, Actor):
       x, y = target.pos
     else:
       x, y = target
-    return direction_to(self.x, self.y, x, y)
+    return _direction_to(self.x, self.y, x, y)
 
   def direction_toXY(self, x, y):
-    return direction_to(self.x, self.y, x, y)
+    return _direction_to(self.x, self.y, x, y)
 
 
   def move_towards(self, target:Union[int, float, Actor, _Coordinate], dist, stop_on_target=True):
@@ -1057,7 +1049,7 @@ class Actor(Actor):
     self.angle = self.direction_to(actor)
 
   def point_towardsXY(self, x, y):
-    self.angle = direction_to(self.x, self.y, x, y)
+    self.angle = _direction_to(self.x, self.y, x, y)
 
   def move_in_direction(self, dist):
     self.x, self.y = move(self.x, self.y, self.direction, dist)

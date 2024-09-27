@@ -1,27 +1,20 @@
-import io
-import os.path
-from setuptools import setup
-
-path = os.path.join(os.path.dirname(__file__), 'README.rst')
-with io.open(path, encoding='utf8') as f:
-    LONG_DESCRIPTION = f.read()
-
-install_requires = [
-    "pgzero>=1.2"
-]
+from setuptools import setup, find_packages
 
 setup(
-    name='pgzhelper',
-    version='1.0b0',
+    name='pgzhelper_rw',
+    version='1.0.8',
     description="Pygame Zero Helper enhance Pygame Zero with additional capabilities",
-    long_description=LONG_DESCRIPTION,
-    author='Cort',
-    author_email='cort@cortscorner.net',
-    url='https://www.aposteriori.com.sg/pygame-zero-helper/',
-    include_package_data=True,
-    py_modules=['pgzhelper'],
-    install_requires=install_requires,
-    python_requires='>=3.7',
+    author='Cort + Roboticsware',
+    author_email='roboticsware.uz@gmail.com',
+    url='https://github.com/roboticsware/pgzhelper/',
+    download_url="https://github.com/roboticsware/pgzhelper/archive/refs/heads/master.zip",
+    long_description=open("README.md").read(),
+    long_description_content_type="text/markdown",
+    install_requires=["pgzero>=1.2"],
+    packages=find_packages(exclude=[]),
+    package_data={},
+	zip_safe=False,
+    python_requires='>=3.8',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Education',
@@ -29,5 +22,6 @@ setup(
         'Programming Language :: Python :: 3 :: Only',
         'Topic :: Education',
         'Topic :: Games/Entertainment',
-    ]
+    ],
+    keywords=['roboticsware', 'neopia', 'pygame zero'],
 )
