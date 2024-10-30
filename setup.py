@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pgzhelper_rw',
-    version='1.0.8',
+    version='1.0.9',
     description="Pygame Zero Helper enhance Pygame Zero with additional capabilities",
     author='Cort + Roboticsware',
     author_email='roboticsware.uz@gmail.com',

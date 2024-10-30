@@ -21,6 +21,10 @@ import sys, math
 from pgzhelper.pgzhelper import Util
 from pgzhelper.pgzhelper import Actor
 from pgzhelper.pgzhelper import Collide
+from pgzero import game
+from pgzero.keyboard import keyboard
+from pgzero.constants import keys
+
 
 __version__ = "1.0.0"
 
@@ -34,6 +38,9 @@ __all__ = [
     "show_mouse",
     "distance_to",
     "direction_to",
+    "game",
+    "keyboard",
+    "keys",
 ]
 
 _fullscreen = False
