@@ -21,4 +21,4 @@ The capabilities provided by pgzhelp can be roughly divided into...
         * Movement and directions: distance_to, direction_to
 
 ## Wiki
-Please see the wiki on github for more details.
+Please see the `wiki <https://www.aposteriori.com.sg/pygame-zero-helper/>`_ on github for more details.

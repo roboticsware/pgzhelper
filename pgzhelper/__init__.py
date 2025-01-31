@@ -24,6 +24,7 @@ from pgzhelper.pgzhelper import Collide
 from pgzero import game
 from pgzero.keyboard import keyboard
 from pgzero.constants import keys
+from pgzero.rect import Rect
 
 
 __version__ = "1.0.0"
@@ -41,6 +42,7 @@ __all__ = [
     "game",
     "keyboard",
     "keys",
+    "Rect",
 ]
 
 _fullscreen = False
