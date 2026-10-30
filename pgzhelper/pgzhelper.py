@@ -19,6 +19,7 @@
 # from __future__ import annotations
 import math
 import pygame
+import colorsys
 from pgzero.actor import Actor, POS_TOPLEFT, ANCHOR_CENTER, transform_anchor
 from pgzero import game, loaders
 from pgzero.screen import ptext
@@ -997,6 +998,7 @@ class Actor(Actor):
     self._collision_height = None
     self.fps = 5
     self.direction = 0
+    self.hue_angle = 0
     subrect=kwargs.pop('subrect',None)
     image_str = None
     if isinstance(image,str):
@@ -1382,27 +1384,26 @@ class Actor(Actor):
 
   def draw(self):
     game.screen.blit(self._surf, self.topleft)
+    if getattr(self, '_say_text', None):
+        tsurf, tpos = ptext.drawbox(
+            self._say_text,
+            (self.left, self.top - 60, getattr(self, '_say_width', 120), getattr(self, '_say_height', 50)),
+            color=getattr(self, '_say_fgcolor', 'black'),
+            background=getattr(self, '_say_bgcolor', 'white'),
+            **getattr(self, '_say_kwargs', {})
+        )
+        game.screen.blit(tsurf, tpos)
 
   def get_rect(self):
     return self._rect
-  
-  def say(self, text, width=120, height=50, fgcolor='black', bgcolor='white', **kwargs):
-        tsurf, tpos = ptext.drawbox(text, (self.left, self.top - 60, width, height),
-                                    color=fgcolor, background=bgcolor, **kwargs)
-        pygame.display.update()
-        tsurf.set_alpha(255)  # 255 means opaque
-        game.screen.blit(tsurf, tpos)
-        pygame.display.update()
 
-  def say_for_sec(self, text, seconds, fgcolor='black', bgcolor='white'):
-    tsurf, tpos = ptext.drawbox(text, (self.left, self.top - 60, 120, 50), 
-                                color=fgcolor, background=bgcolor)
-    pygame.display.update()
-    game.time.sleep(seconds)
-    tsurf.fill(bgcolor)
-    tsurf.set_alpha(255)  # 255 means opaque
-    game.screen.blit(tsurf, tpos)
-    pygame.display.update()
+  def say(self, text, width=120, height=50, fgcolor='black', bgcolor='white', **kwargs):
+    self._say_text = text
+    self._say_width = width
+    self._say_height = height
+    self._say_fgcolor = fgcolor
+    self._say_bgcolor = bgcolor
+    self._say_kwargs = kwargs
 
   def __align_center_to_anchor(self):
     if self.anchor == ('left', 'top'):
@@ -1429,16 +1430,32 @@ class Actor(Actor):
     self._brush_thick = thick
     self._brush_color = color
     self._tp_surf.set_alpha(255)
+    self._last_pos = None
+    self._brush_active = False
 
-  def brush_draw(self):
-    pos = self.__align_center_to_anchor()
-    if self._last_pos and self._last_pos != pos:
-        pygame.draw.line(self._tp_surf, self._brush_color, self._last_pos, pos, self._brush_thick)
-    game.screen.blit(self._tp_surf, (0, 0))
-    self._last_pos = pos
+  def brush_start(self):
+    self._brush_active = True
+    self._last_pos = None
 
   def brush_stop(self):
+    self._brush_active = False
     self._last_pos = None
+
+  def brush_draw(self, active=None):
+    if active is not None:
+        self._brush_active = bool(active)
+        if not self._brush_active:
+            self._last_pos = None
+
+    pos = self.__align_center_to_anchor()
+    if self._brush_active:
+        if self._last_pos and self._last_pos != pos:
+            pygame.draw.line(self._tp_surf, self._brush_color, self._last_pos, pos, self._brush_thick)
+        self._last_pos = pos
+    else:
+        self._last_pos = None
+
+    game.screen.blit(self._tp_surf, (0, 0))
 
   def brush_clear(self):
     self._tp_surf.fill((255, 255, 255, 0))
@@ -1446,6 +1463,40 @@ class Actor(Actor):
   def brush_update(self):
     game.screen.blit(self._tp_surf, (0, 0))
 
+  def apply_hue(self, angle):
+    if not hasattr(self, "_orig_surf"):
+        self._orig_surf = self._surf.copy()
+    self.hue_angle = (self.hue_angle + angle) % 360
+    self._surf = self._change_hue(self._orig_surf, self.hue_angle)
+
+    if self._scale != 1:
+        w, h = self._orig_surf.get_size()
+        self._surf = pygame.transform.smoothscale(
+            self._surf,
+            (int(w * self._scale), int(h * self._scale))
+        )
+
+  def _change_hue(self, src_surf, angle):
+    img = src_surf.copy()
+    w, h = img.get_size()
+    dh = (angle % 360) / 360.0
+
+    img.lock()
+    for x in range(w):
+        for y in range(h):
+            r, g, b, a = img.get_at((x, y))
+            rf, gf, bf = r/255.0, g/255.0, b/255.0
+            h0, s0, v0 = colorsys.rgb_to_hsv(rf, gf, bf)
+            h1 = (h0 + dh) % 1.0
+            r1, g1, b1 = colorsys.hsv_to_rgb(h1, s0, v0)
+            img.set_at((x, y), (
+                int(r1 * 255),
+                int(g1 * 255),
+                int(b1 * 255),
+                a
+            ))
+    img.unlock()
+    return img
 
 class Util():
     @staticmethod
