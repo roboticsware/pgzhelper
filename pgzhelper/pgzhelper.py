@@ -1203,12 +1203,14 @@ class Actor(Actor):
       self._image_name = ''
     self._update_pos()
     if image is not None and hasattr(self, '_untransformed_anchor'):
-      if (image not in self._surfs) or (self._surfs[image][1]!=self._transform_cnt):       
+      if (image not in self._surfs) or (self._surfs[image][2]!=self._transform_cnt):       
         self._transform_surf()
-        self._surfs[image]=(self._surf,self._transform_cnt)
+        self._surfs[image]=(self._surf, self._anchor, self._transform_cnt)
       else:
-        self._surf = self._surfs[image][0]
-        self._update_pos()
+        p = self.pos
+        self._surf, self._anchor = self._surfs[image][0], self._surfs[image][1]
+        self.width, self.height = self._surf.get_size()
+        self.pos = p
 
   @property
   def subrect(self):
@@ -1227,10 +1229,14 @@ class Actor(Actor):
           self._orig_surfs[surf_name] = loaders.images.load(self.image).subsurface(subr)
         self._orig_surf=self._orig_surfs[surf_name]
         self._update_pos()
-        if (surf_name not in self._surfs) or (self._surfs[surf_name][1]!=self._transform_cnt):       
+        if (surf_name not in self._surfs) or (self._surfs[surf_name][2]!=self._transform_cnt):       
           self._transform_surf()
-          self._surfs[surf_name]=(self._surf,self._transform_cnt) 
-        self._surf=self._surfs[surf_name][0]     
+          self._surfs[surf_name]=(self._surf, self._anchor, self._transform_cnt) 
+        else:
+          p = self.pos
+          self._surf, self._anchor = self._surfs[surf_name][0], self._surfs[surf_name][1]
+          self.width, self.height = self._surf.get_size()
+          self.pos = p     
       else:
         self._orig_surf = self._surf = loaders.images.load(self.image)
         self._update_pos()
