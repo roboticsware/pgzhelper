@@ -21,7 +21,7 @@ os.environ['SDL_VIDEODRIVER'] = 'dummy'
 project = 'pgzhelper'
 copyright = '2024, Roboticsware'
 author = 'Roboticsware'
-release = '1.0.11'
+release = '1.0.12'
 
 # -- General configuration ---------------------------------------------------
 extensions = [

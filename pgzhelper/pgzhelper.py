@@ -1202,10 +1202,13 @@ class Actor(Actor):
       self._orig_surf = self._surf = pygame.Surface((1,1),pygame.SRCALPHA)
       self._image_name = ''
     self._update_pos()
-    if image is not None:
+    if image is not None and hasattr(self, '_untransformed_anchor'):
       if (image not in self._surfs) or (self._surfs[image][1]!=self._transform_cnt):       
         self._transform_surf()
         self._surfs[image]=(self._surf,self._transform_cnt)
+      else:
+        self._surf = self._surfs[image][0]
+        self._update_pos()
 
   @property
   def subrect(self):
