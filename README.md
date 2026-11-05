@@ -4,26 +4,26 @@
 [![Documentation Status](https://readthedocs.org/projects/pgzhelper-rw/badge/?version=latest)](https://pgzhelper-rw.readthedocs.io/en/latest/?badge=latest)
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL_v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 
-**pgzhelper_rw** is a helper library designed to enhance [Pygame Zero](https://pygame-zero.readthedocs.io/) with Scratch-like intuitive actor capabilities, smooth sprite animations, real-time image manipulations, and comprehensive 2D collision detection algorithms.
+**pgzhelper_rw** is an enhanced helper library for [Pygame Zero](https://pygame-zero.readthedocs.io/). It brings Scratch-like intuitive actor controls, frame-by-frame sprite animations, real-time image manipulations, and comprehensive 2D collision detection algorithms to your game projects.
 
 ---
 
-## 📚 Documentation (라이브러리 레퍼런스)
+## 📚 Documentation / 공식 문서
 
-상세한 한국어/영어/우즈베크어 가이드와 전체 API 레퍼런스는 공식 문서 사이트에서 확인하실 수 있습니다:
+Full documentation in **English, 한국어 (Korean), and O'zbekcha (Uzbek)** with comprehensive API references and tutorials is available at:
 
 👉 **[https://pgzhelper-rw.readthedocs.io](https://pgzhelper-rw.readthedocs.io)**
 
-* **사용자 가이드**: 시작하기, 전체화면 및 마우스 제어
-* **Actor 완벽 가이드**: 스크래치 스타일 이동, 각도 회전, 스프라이트 애니메이션, 말풍선(`say`), 붓 궤적(`brush_*`), 실시간 색조 변경(`add_hue`)
-* **Collision 가이드**: 점(Point), 선(Line), 원(Circle), AABB 사각형(Rect), 회전 사각형(OBB) 간의 고속 충돌 판정 및 복수형 함수
-* **API Reference**: 전체 클래스 및 함수 명세
+* **User Guides**: Getting started, screen controls (fullscreen/windowed), and mouse visibility.
+* **Actor Complete Guide**: Scratch-style movement (`move_forward`, `point_towards`), sprite animation, speech balloons (`say`), trail drawing (`brush_*`), and dynamic hue shifting (`add_hue`).
+* **Collision Guide**: Collision detection between Points, Lines, Circles, AABB Rectangles, and OBB (Oriented Bounding Box) Rectangles, with high-performance plural query functions.
+* **API Reference**: Detailed class and function specifications.
 
 ---
 
-## 🚀 Installation (설치 방법)
+## 🚀 Installation / 설치
 
-Python 3.7 이상 환경에서 `pip`로 설치할 수 있습니다:
+Requires Python 3.7+ and Pygame Zero 1.2+. Install from PyPI via `pip`:
 
 ```bash
 pip install pgzhelper_rw
@@ -31,9 +31,9 @@ pip install pgzhelper_rw
 
 ---
 
-## 🎮 Quick Start (기본 사용법)
+## 🎮 Quick Start / 빠른 시작
 
-Pygame Zero 코드에서 `from pgzhelper import *`를 임포트하면 기본 `Actor`가 강화된 `Actor`로 자동 교체됩니다.
+Importing `pgzhelper` automatically enhances Pygame Zero's standard `Actor` class with extra superpowers.
 
 ```python
 import pgzrun
@@ -46,7 +46,7 @@ alien = Actor('alien')
 alien.pos = 400, 300
 
 def update():
-    # 1. 마우스 위치를 바라보고 전진 (Scratch 스타일)
+    # 1. Look towards the mouse position and move forward (Scratch style)
     alien.point_towards(pygame.mouse.get_pos())
     alien.move_forward(3)
 
@@ -59,59 +59,67 @@ pgzrun.go()
 
 ---
 
-## 💡 Key Features (주요 기능)
+## 💡 Key Features / 주요 기능
 
-### 1. Scratch 스타일 Actor 이동 및 회전
+### 1. Scratch-style Actor Movements / 직관적인 이동 및 회전
 ```python
-actor.move_forward(5)            # 현재 각도 방향으로 전진
-actor.move_back(5)               # 후진
-actor.move_left(5)               # 좌측 이동 (스트레이프)
-actor.move_right(5)              # 우측 이동
-actor.point_towards(target)      # 대상 액터 또는 (x, y) 방향 바라보기
-actor.distance_to(target)        # 대상과의 거리 계산
-actor.move_towards(target, 4)    # 대상을 향해 이동
+actor.move_forward(5)            # Move forward in the direction of current angle
+actor.move_back(5)               # Move backward
+actor.move_left(5)               # Strafe left
+actor.move_right(5)              # Strafe right
+actor.point_towards(target)      # Point towards another actor or (x, y) coordinates
+actor.distance_to(target)        # Calculate distance to target
+actor.move_towards(target, 4)    # Move directly towards target
 ```
 
-### 2. 스프라이트 애니메이션 & 크기/반전/색조 조절
+### 2. Sprite Animation & Image Effects / 애니메이션 및 이미지 효과
 ```python
-# 애니메이션
+# Frame-by-frame sprite animation
 actor.images = ['walk_1', 'walk_2', 'walk_3']
 actor.fps = 10
 actor.animate()
 
-# 변형 및 색조(Hue) 회전
-actor.scale = 1.5                # 크기 확대/축소
-actor.flip_x = True              # 좌우 반전
-actor.add_hue(30)                # 총알 맞을 때마다 색조 30도씩 변경 (NumPy 가속)
-actor.hue = 180                  # 특정 색조 각도 고정
+# Scaling & Flipping
+actor.scale = 1.5                # Scale sprite size
+actor.flip_x = True              # Flip horizontally
+actor.flip_y = False             # Flip vertically
+
+# Real-time Hue Rotation (NumPy accelerated & cached)
+actor.add_hue(30)                # Shift color hue by +30 degrees (e.g. on bullet hit)
+actor.hue = 180                  # Set specific hue angle (0 ~ 360)
 ```
 
-### 3. 말풍선 & 이동 궤적 그리기
+### 3. Speech Balloons & Trail Drawing / 말풍선 및 궤적 그리기
 ```python
-actor.say("Hello!")              # 머리 위에 말풍선 표시
+# Display speech bubble above the actor
+actor.say("Hello World!", width=150, height=40, fgcolor='black', bgcolor='white')
+
+# Brush trail drawing as the actor moves
 actor.brush_init((800, 600), thick=3, color='yellow')
-actor.brush_start()              # 궤적 그리기 시작
+actor.brush_start()
 ```
 
-### 4. 강력한 충돌 감지 (Collide)
-점, 선, 원, 사각형(AABB), 회전 사각형(OBB)을 모두 지원합니다.
+### 4. Comprehensive Collision Detection (Collide) / 강력한 충돌 감지
+Supports accurate collision checks between Points, Lines, Circles, AABB Rectangles, and OBB (rotated) Rectangles.
 
 ```python
 from pgzhelper import Collide
 
-# 원과 점 충돌
+# Single collision check: Circle vs Point
 if Collide.circle_point(cx, cy, radius, px, py):
-    print("Hit!")
+    print("Collision detected!")
 
-# 고속 복수형 충돌 (총알 리스트 등)
+# High-performance plural collision check: Circle vs list of Points (e.g. bullets)
 hit_index = Collide.circle_points(player.x, player.y, player.radius, bullets)
 if hit_index != -1:
+    print(f"Hit by bullet index: {hit_index}")
     del bullets[hit_index]
 ```
 
 ---
 
-## 🌐 Wiki & Resources
-* **Official Docs**: [https://pgzhelper-rw.readthedocs.io](https://pgzhelper-rw.readthedocs.io)
+## 🌐 Resources & Links
+* **Official Documentation**: [https://pgzhelper-rw.readthedocs.io](https://pgzhelper-rw.readthedocs.io)
 * **GitHub Repository**: [https://github.com/roboticsware/pgzhelper](https://github.com/roboticsware/pgzhelper)
-* **Original Wiki**: [https://github.com/QuirkyCort/pgzhelper/wiki](https://github.com/QuirkyCort/pgzhelper/wiki)
+* **PyPI Package**: [https://pypi.org/project/pgzhelper_rw/](https://pypi.org/project/pgzhelper_rw/)
+* **Original pgzhelper Wiki**: [https://github.com/QuirkyCort/pgzhelper/wiki](https://github.com/QuirkyCort/pgzhelper/wiki)
