@@ -7,17 +7,20 @@ Key Features
 ------------
 
 * **Actor Enhancements**:
+
   * **Scratch-style Movement**: ``move_forward()``, ``point_towards()``, ``distance_to()``
   * **Sprite Animation**: Multiple frame cycling with custom ``fps``
   * **Image Transformation**: Scaling (``scale``), flipping (``flip_x``, ``flip_y``), and real-time hue shifting (``add_hue()``)
   * **Speech Bubbles & Trail Drawing**: Render speech balloons with ``say()`` and trace paths using ``brush_*``
 
 * **Powerful Collision Detection**:
+
   * Accurate collision checking between Points, Lines, Circles, AABB Rectangles, and OBB (Oriented Bounding Box) Rectangles
   * High-performance plural functions (e.g. ``circle_points``, ``obb_lines``)
   * Distance and coordinate reporting (e.g. ``line_circle_XY``, ``line_rect_dist``)
 
 * **Utilities**:
+
   * Fullscreen toggle (``toggle_fullscreen``), mouse cursor visibility (``hide_mouse``, ``show_mouse``)
 
 Installation

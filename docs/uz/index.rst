@@ -11,17 +11,20 @@ Asosiy xususiyatlar
 -------------------
 
 * **Actor kengaytmalari**:
+
   * **Scratch uslubidagi harakat**: ``move_forward()``, ``point_towards()``, ``distance_to()``
   * **Spayt animatsiyasi**: Bir nechta kadrlar va ``fps`` bilan oson animatsiya boshqaruvi
   * **Tasvirni o'zgartirish**: O'lchamni kattalashtirish (``scale``), akslantirish (``flip_x``, ``flip_y``) va rang tusini o'zgartirish (``add_hue()``)
   * **Matnli pufakchalar va chizish**: ``say()`` orqali gapirtirish va ``brush_*`` yordamida iz qoldirish
 
 * **Kuchli to'qnashuvlarni aniqlash**:
+
   * Nuqta (Point), To'g'ri chiziq (Line), Aylana (Circle), To'g'ri to'rtburchak (Rect/AABB) va Burilgan to'rtburchak (OBB) orasidagi to'qnashuvlar
   * Yuqori tezlikda ishlovchi ko'plik funksiyalari (masalan: ``circle_points``, ``obb_lines``)
   * Eng yaqin kesishish nuqtasi koordinatasi va masofasini hisoblash (``line_circle_XY``, ``line_rect_dist``)
 
 * **Foydali vositalar**:
+
   * To'liq ekran rejimiga o'tish (``toggle_fullscreen``), sichqoncha kursorini yashirish (``hide_mouse``, ``show_mouse``)
 
 O'rnatish
