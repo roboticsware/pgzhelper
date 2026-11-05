@@ -1011,6 +1011,7 @@ class Actor(Actor):
     if isinstance(image,str):
       image_str = image      
     super().__init__(image_str, pos, anchor, **kwargs)
+    self._surfs.clear()
     if isinstance(image,pygame.Surface):
         self._orig_surf = image        
         self._update_pos()
@@ -1187,6 +1188,17 @@ class Actor(Actor):
     self._flip_y = flip_y
     self._transform_surf()
     self._transform_cnt+=1
+
+  @property
+  def anchor(self):
+    return super().anchor
+
+  @anchor.setter
+  def anchor(self, val):
+    self._anchor_value = val
+    self._calc_anchor()
+    self._transform_surf()
+    self._transform_cnt += 1
 
   @property
   def image(self):
