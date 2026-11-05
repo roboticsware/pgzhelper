@@ -20,6 +20,13 @@
 import math
 import pygame
 import colorsys
+try:
+    import numpy as np
+    _HAS_NUMPY = True
+except ImportError:
+    _HAS_NUMPY = False
+
+_HUE_CACHE = {}
 from pgzero.actor import Actor, POS_TOPLEFT, ANCHOR_CENTER, transform_anchor
 from pgzero import game, loaders
 from pgzero.screen import ptext
@@ -1242,7 +1249,10 @@ class Actor(Actor):
     self._transform_surf()
                 
   def _transform_surf(self):
-    self._surf = self._orig_surf
+    base_surf = self._orig_surf
+    if getattr(self, 'hue_angle', 0) % 360 != 0:
+      base_surf = self._get_hued_surf(self._orig_surf, self.hue_angle)
+    self._surf = base_surf
     p = self.pos
 
     if self._scale != 1:
@@ -1463,24 +1473,77 @@ class Actor(Actor):
   def brush_update(self):
     game.screen.blit(self._tp_surf, (0, 0))
 
-  def apply_hue(self, angle):
-    if not hasattr(self, "_orig_surf"):
-        self._orig_surf = self._surf.copy()
-    self.hue_angle = (self.hue_angle + angle) % 360
-    self._surf = self._change_hue(self._orig_surf, self.hue_angle)
+  @property
+  def hue(self):
+    return getattr(self, 'hue_angle', 0)
 
-    if self._scale != 1:
-        w, h = self._orig_surf.get_size()
-        self._surf = pygame.transform.smoothscale(
-            self._surf,
-            (int(w * self._scale), int(h * self._scale))
-        )
+  @hue.setter
+  def hue(self, angle):
+    self.hue_angle = angle % 360
+    self._transform_surf()
+    self._transform_cnt += 1
+
+  def add_hue(self, angle):
+    self.hue_angle = (getattr(self, 'hue_angle', 0) + angle) % 360
+    self._transform_surf()
+    self._transform_cnt += 1
+
+  def apply_hue(self, angle):
+    self.add_hue(angle)
+
+  def _get_hued_surf(self, src_surf, angle):
+    angle = angle % 360
+    if angle == 0:
+      return src_surf
+    cache_key = (id(src_surf), angle)
+    if cache_key in _HUE_CACHE:
+      return _HUE_CACHE[cache_key]
+    hued = self._change_hue(src_surf, angle)
+    _HUE_CACHE[cache_key] = hued
+    return hued
 
   def _change_hue(self, src_surf, angle):
+    dh = (angle % 360) / 360.0
+    if _HAS_NUMPY:
+      try:
+        res = src_surf.copy()
+        arr = pygame.surfarray.pixels3d(res).astype(np.float32) / 255.0
+        r, g, b = arr[..., 0], arr[..., 1], arr[..., 2]
+        maxc = np.maximum(np.maximum(r, g), b)
+        minc = np.minimum(np.minimum(r, g), b)
+        v = maxc
+        deltac = maxc - minc
+        s = np.where(maxc != 0, deltac / maxc, 0.0)
+
+        rc = np.where(deltac != 0, (maxc - r) / deltac, 0.0)
+        gc = np.where(deltac != 0, (maxc - g) / deltac, 0.0)
+        bc = np.where(deltac != 0, (maxc - b) / deltac, 0.0)
+
+        h = np.zeros_like(maxc)
+        h = np.where(r == maxc, bc - gc, h)
+        h = np.where(g == maxc, 2.0 + rc - bc, h)
+        h = np.where(b == maxc, 4.0 + gc - rc, h)
+        h = ((h / 6.0) + dh) % 1.0
+
+        i = (h * 6.0).astype(int)
+        f = (h * 6.0) - i
+        p = v * (1.0 - s)
+        q = v * (1.0 - s * f)
+        t = v * (1.0 - s * (1.0 - f))
+        i = i % 6
+
+        rgb = np.zeros_like(arr)
+        rgb[..., 0] = np.select([i == 0, i == 1, i == 2, i == 3, i == 4, i == 5], [v, q, p, p, t, v])
+        rgb[..., 1] = np.select([i == 0, i == 1, i == 2, i == 3, i == 4, i == 5], [t, v, v, q, p, p])
+        rgb[..., 2] = np.select([i == 0, i == 1, i == 2, i == 3, i == 4, i == 5], [p, p, t, v, v, q])
+
+        pygame.surfarray.pixels3d(res)[:] = (rgb * 255).astype(np.uint8)
+        return res
+      except Exception:
+        pass
+
     img = src_surf.copy()
     w, h = img.get_size()
-    dh = (angle % 360) / 360.0
-
     img.lock()
     for x in range(w):
         for y in range(h):
