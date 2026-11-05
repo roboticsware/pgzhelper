@@ -1,7 +1,7 @@
-API 레퍼런스 (API Reference)
-============================
+API Reference
+=============
 
-이 문서는 ``pgzhelper`` 라이브러리의 클래스 및 공개 함수 명세를 다룹니다.
+This section documents all public classes and functions in ``pgzhelper``.
 
 Actor
 -----
@@ -18,8 +18,8 @@ Collide
    :members:
    :undoc-members:
 
-Util 및 화면 제어 함수
-----------------------
+Utilities & Display Controls
+----------------------------
 
 .. autofunction:: pgzhelper.toggle_fullscreen
 

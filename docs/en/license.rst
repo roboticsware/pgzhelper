@@ -1,6 +1,6 @@
-라이선스 (License)
-==================
+License
+=======
 
-``pgzhelper_rw`` 는 **GNU Lesser General Public License v3.0 (LGPLv3)** 하에 배포됩니다.
+``pgzhelper_rw`` is distributed under the **GNU Lesser General Public License v3.0 (LGPLv3)**.
 
-자세한 내용은 프로젝트 루트의 ``LICENSE`` 파일을 참고하세요.
+See the ``LICENSE`` file in the project root for full details.

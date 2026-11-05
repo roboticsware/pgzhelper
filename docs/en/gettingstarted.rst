@@ -1,19 +1,19 @@
-시작하기
-========
+Getting Started
+===============
 
-설치
-----
+Installation
+------------
 
-``pgzhelper_rw`` 는 Python 3.7 이상 및 Pygame Zero 1.2 이상을 지원합니다.
+``pgzhelper_rw`` supports Python 3.7+ and Pygame Zero 1.2+.
 
 .. code-block:: bash
 
     pip install pgzhelper_rw
 
-기본 구조
----------
+Basic Structure
+---------------
 
-Pygame Zero 코드에서 ``pgzhelper`` 를 import하면 내장 ``Actor`` 클래스가 자동으로 확장된 기능들로 교체됩니다.
+Importing ``pgzhelper`` in your Pygame Zero program automatically replaces the standard ``Actor`` with an enhanced one.
 
 .. code-block:: python
 
@@ -38,17 +38,17 @@ Pygame Zero 코드에서 ``pgzhelper`` 를 import하면 내장 ``Actor`` 클래�
 
     pgzrun.go()
 
-화면 제어
----------
+Screen & Mouse Controls
+-----------------------
 
-전체 화면 모드와 창 모드를 간편하게 전환하거나 마우스 커서를 숨길 수 있습니다.
+Easily toggle fullscreen mode or toggle mouse cursor visibility:
 
 .. code-block:: python
 
     from pgzhelper import toggle_fullscreen, hide_mouse, show_mouse
 
-    # 전체 화면 토글
+    # Toggle fullscreen mode
     toggle_fullscreen()
 
-    # 마우스 커서 숨기기
+    # Hide mouse cursor
     hide_mouse()
